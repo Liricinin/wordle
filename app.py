@@ -1,12 +1,11 @@
 from flask import Flask, render_template
 import random
-import os
 
-app = Flask(__name__, template_folder="templates")
+app = Flask(__name__)
 
 WORDS = [
-    "домик", "комик", "кошка", "вилка", "флага",
-    "песня", "ручка", "лампа", "столб", "трава"
+    "домик", "кошка", "лампа", "вилка", "трава",
+    "песня", "ручка", "столб", "флага", "комик"
 ]
 
 SECRET = random.choice(WORDS)
@@ -18,27 +17,19 @@ def index():
 
 
 @app.route("/secret")
-def get_secret():
+def secret():
     return SECRET
 
 
 @app.route("/new")
-def new_game():
+def new():
     global SECRET
     SECRET = random.choice(WORDS)
     return "ok"
 
 
-@app.route("/debug")
-def debug():
-    files = os.listdir("templates") if os.path.exists("templates") else "NO TEMPLATES DIR"
-    return str(files)
-
-
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000)
-
-
+    app.run(host="0.0.0.0", port=10000)
 
 
 
