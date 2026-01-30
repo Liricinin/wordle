@@ -18,7 +18,7 @@ def index():
 
 @app.route("/secret")
 def secret():
-    return SECRET
+    return SECRET.encode("utf-8")
 
 
 @app.route("/new")
@@ -30,6 +30,7 @@ def new():
 
 if __name__ == "__main__":
     app.run()
+
 
 
 
