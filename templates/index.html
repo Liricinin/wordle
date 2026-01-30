@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Wordle RU</title>
+
+<style>
+body {
+    background: #121213;
+    color: white;
+    font-family: Arial;
+    text-align: center;
+}
+
+h1 {
+    margin-top: 20px;
+}
+
+#grid {
+    display: grid;
+    grid-template-columns: repeat(5, 55px);
+    gap: 8px;
+    justify-content: center;
+    margin: 30px auto;
+}
+
+.cell {
+    width: 55px;
+    height: 55px;
+    border: 2px solid #3a3a3c;
+    font-size: 28px;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-transform: uppercase;
+}
+
+.correct {
+    background: #538d4e;
+}
+
+.present {
+    background: #b59f3b;
+}
+
+.wrong {
+    background: #3a3a3c;
+}
+
+input {
+    font-size: 20px;
+    padding: 10px;
+    width: 160px;
+    text-align: center;
+}
+
+button {
+    padding: 10px 20px;
+    margin-top: 10px;
+    background: #538d4e;
+    border: none;
+    color: white;
+    font-size: 16px;
+    border-radius: 5px;
+}
+</style>
+</head>
+
+<body>
+
+<h1>WORDLE RU</h1>
+
+<div id="grid"></div>
+
+<input id="guess" maxlength="5" placeholder="Слово">
+<br>
+<button onclick="check()">Проверить</button>
+
+<script>
+const word = "{{ word }}".toUpperCase();
+let row = 0;
+
+const grid = document.getElementById("grid");
+
+for(let i=0;i<30;i++){
+    let d = document.createElement("div");
+    d.className = "cell";
+    grid.appendChild(d);
+}
+
+function check(){
+    let input = document.getElementById("guess");
+    let guess = input.value.toUpperCase();
+
+    if(guess.length !== 5){
+        alert("Нужно 5 букв");
+        return;
+    }
+
+    for(let i=0;i<5;i++){
+        let cell = grid.children[row*5+i];
+        cell.innerText = guess[i];
+
+        if(guess[i] === word[i]){
+            cell.classList.add("correct");
+        }
+        else if(word.includes(guess[i])){
+            cell.classList.add("present");
+        }
+        else{
+            cell.classList.add("wrong");
+        }
+    }
+
+    if(guess === word){
+        setTimeout(()=>alert("🎉 Победа!"),100);
+    }
+
+    row++;
+    input.value = "";
+}
+</script>
+
+</body>
+</html>
