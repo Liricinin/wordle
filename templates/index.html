@@ -1,120 +1,7 @@
-<!DOCTYPE html>
-<html lang="ru">
-<head>
-<meta charset="UTF-8">
-<title>Wordle</title>
+for (let i = 0; i < 5; i++) {
 
-<style>
-body {
-  font-family: Arial;
-  text-align: center;
-  background: #f2f2f2;
-}
-
-#grid {
-  display: grid;
-  grid-template-columns: repeat(5, 60px);
-  gap: 8px;
-  justify-content: center;
-  margin: 20px auto;
-}
-
-.cell {
-  width: 60px;
-  height: 60px;
-  border: 2px solid #ccc;
-  font-size: 26px;
-  font-weight: bold;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: white;
-}
-
-.green { background: #6aaa64; color: white; }
-.yellow { background: #c9b458; color: white; }
-.gray { background: #787c7e; color: white; }
-
-input {
-  font-size: 20px;
-  padding: 8px;
-  width: 150px;
-  text-transform: uppercase;
-}
-
-button {
-  font-size: 18px;
-  padding: 8px 15px;
-}
-</style>
-</head>
-
-<body>
-
-<h1>Wordle</h1>
-
-<div id="grid"></div>
-
-<input id="wordInput" maxlength="5">
-<button onclick="checkWord()">OK</button>
-
-<script>
-
-let row = 0;
-let maxRows = 6;
-let secret = "";
-const grid = document.getElementById("grid");
-
-
-// create grid
-for (let i = 0; i < 30; i++) {
-  let cell = document.createElement("div");
-  cell.className = "cell";
-  grid.appendChild(cell);
-}
-
-
-// get secret
-fetch("/secret")
-  .then(r => r.text())
-  .then(s => secret = s.toUpperCase());
-
-
-// show result
-function showResult(win) {
-
-  if (win) {
-    alert("🎉 You win! Word: " + secret);
-  } else {
-    alert("😢 You lose. Word: " + secret);
-  }
-
-  fetch("/new").then(() => location.reload());
-}
-
-
-// main logic
-function checkWord() {
-
-  const input = document.getElementById("wordInput");
-  let guess = input.value.toUpperCase();
-
-  if (guess.length !== 5) {
-    alert("Enter 5 letters");
-    return;
-  }
-
-  let start = row * 5;
-
-  let secretArr = secret.split("");
-  let guessArr = guess.split("");
-
-  let result = new Array(5).fill("gray");
-
-
-  // Green
-  for (let i = 0; i < 5; i++) {
     if (guessArr[i] === secretArr[i]) {
+
       result[i] = "green";
       secretArr[i] = null;
       guessArr[i] = null;
@@ -122,13 +9,15 @@ function checkWord() {
   }
 
 
-  // Yellow
+  // yellow
   for (let i = 0; i < 5; i++) {
+
     if (guessArr[i] !== null) {
 
       let index = secretArr.indexOf(guessArr[i]);
 
       if (index !== -1) {
+
         result[i] = "yellow";
         secretArr[index] = null;
       }
@@ -136,7 +25,7 @@ function checkWord() {
   }
 
 
-  // Draw
+  // draw
   for (let i = 0; i < 5; i++) {
 
     let cell = grid.children[start + i];
@@ -146,17 +35,20 @@ function checkWord() {
   }
 
 
-  // Win
+  // win
   if (guess === secret) {
+
     showResult(true);
     return;
   }
 
+
   row++;
 
 
-  // Lose
+  // lose
   if (row >= maxRows) {
+
     showResult(false);
   }
 
