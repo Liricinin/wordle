@@ -13,5 +13,6 @@ def index():
     word = random.choice(WORDS)
     return render_template("index.html", word=word)
 
-if name == "__main__":
+if __name__ == "__main__":
     app.run()
+
