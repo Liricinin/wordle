@@ -96,6 +96,10 @@ function newGame() {
 
 document.querySelectorAll("#keyboard .key").forEach(btn => {
 
+    btn.addEventListener("mousedown", e => {
+        e.preventDefault(); //
+    });
+
     btn.addEventListener("click", () => {
 
         let key = btn.textContent;
@@ -140,3 +144,4 @@ document.addEventListener("keydown", e => {
 
 </body>
 </html>
+
