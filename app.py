@@ -1,7 +1,7 @@
 from flask import Flask, render_template
 import random
 
-app = Flask(__name__, template_folder="templates")
+app = Flask(__name__)
 
 WORDS = [
     "домик", "кошка", "лампа", "вилка", "трава",
@@ -13,7 +13,7 @@ SECRET = random.choice(WORDS)
 
 @app.route("/")
 def index():
-    return "<h1>TEST</h1>"
+    return render_template("index.html")
 
 
 @app.route("/secret")
@@ -30,6 +30,7 @@ def new():
 
 if __name__ == "__main__":
     app.run()
+
 
 
 
