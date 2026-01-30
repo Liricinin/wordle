@@ -142,10 +142,13 @@ function showResult(win) {
 /* ===== ПРОВЕРКА СЛОВА ===== */
 
 function checkWord() {
-
+    
+ if (!secret) {
+        alert("Подожди, слово загружается...");
+        return;
+ }
     let guess = input.value.toUpperCase();
-
-
+    
     if (guess.length !== 5) {
         alert("Введите 5 букв");
         return;
@@ -232,3 +235,4 @@ function checkWord() {
     if (row >= maxRows) {
 
         showResult(false);
+
