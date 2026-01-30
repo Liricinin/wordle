@@ -1,85 +1,57 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-    <meta charset="UTF-8">
-    <title>Wordle RU</title>
+<meta charset="UTF-8">
+<title>Wordle RU</title>
 
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background: #121213;
-            color: white;
-            text-align: center;
-            margin: 0;
-            padding: 0;
-        }
+<style>
+body {
+    font-family: Arial, sans-serif;
+    background: #121213;
+    color: white;
+    text-align: center;
+}
 
-        h1 {
-            margin: 20px 0;
-        }
+h1 {
+    margin: 20px;
+}
 
-        #grid {
-            display: grid;
-            grid-template-columns: repeat(5, 60px);
-            gap: 5px;
-            justify-content: center;
-            margin: 20px auto;
-        }
+#grid {
+    display: grid;
+    grid-template-columns: repeat(5, 60px);
+    gap: 5px;
+    justify-content: center;
+    margin: 20px auto;
+}
 
-        .cell {
-            width: 60px;
-            height: 60px;
-            border: 2px solid #555;
-            font-size: 32px;
-            line-height: 60px;
-            font-weight: bold;
-            text-transform: uppercase;
-            user-select: none;
-        }
+.cell {
+    width: 60px;
+    height: 60px;
+    border: 2px solid #555;
+    font-size: 32px;
+    line-height: 60px;
+    font-weight: bold;
+    text-transform: uppercase;
+}
 
-        .green {
-            background: #538d4e;
-        }
+.green { background: #538d4e; }
+.yellow { background: #b59f3b; }
+.gray { background: #3a3a3c; }
 
-        .yellow {
-            background: #b59f3b;
-        }
+input {
+    font-size: 20px;
+    padding: 10px;
+    text-transform: uppercase;
+    width: 140px;
+    text-align: center;
+}
 
-        .gray {
-            background: #3a3a3c;
-        }
-
-        input {
-            font-size: 20px;
-            padding: 10px;
-            text-transform: uppercase;
-            width: 140px;
-            text-align: center;
-            border: none;
-            outline: none;
-            border-radius: 5px;
-        }
-
-        button {
-            padding: 10px 15px;
-            font-size: 16px;
-            cursor: pointer;
-            border: none;
-            border-radius: 5px;
-            background: #538d4e;
-            color: white;
-        }
-
-        button:hover {
-            opacity: 0.9;
-        }
-
-        #result {
-            margin-top: 15px;
-            font-size: 18px;
-            min-height: 24px;
-        }
-    </style>
+button {
+    padding: 10px 15px;
+    font-size: 16px;
+    cursor: pointer;
+}
+</style>
 </head>
 
 <body>
@@ -88,10 +60,8 @@
 
 <div id="grid"></div>
 
-<div>
-    <input id="wordInput" maxlength="5" placeholder="Слово">
-    <button onclick="checkWord()">OK</button>
-</div>
+<input id="wordInput" maxlength="5" placeholder="Слово">
+<button onclick="checkWord()">OK</button>
 
 <p id="result"></p>
 
@@ -101,64 +71,47 @@ let row = 0;
 const maxRows = 6;
 
 const grid = document.getElementById("grid");
-const resultText = document.getElementById("result");
 const input = document.getElementById("wordInput");
+const resultText = document.getElementById("result");
 
 let secret = "";
 
-
-/* ===== СОЗДАЁМ СЕТКУ ===== */
-
+/* Создаём поле */
 for (let i = 0; i < 30; i++) {
     let div = document.createElement("div");
     div.className = "cell";
     grid.appendChild(div);
 }
 
-
-/* ===== ПОЛУЧАЕМ СЕКРЕТ ===== */
-
+/* Загружаем слово */
 fetch("/secret")
-    .then(res => res.text())
+    .then(r => r.text())
     .then(word => {
-        secret = word.toUpperCase();
-        console.log("SECRET:", secret); // для отладки
+        secret = word.trim().toUpperCase();
+        console.log("SECRET:", secret); // для проверки
     });
 
-
-/* ===== ПОКАЗ РЕЗУЛЬТАТА ===== */
-
 function showResult(win) {
-
     if (win) {
         resultText.textContent = "Ты выиграл 😎";
     } else {
         resultText.textContent = "Проиграл 😢 Слово: " + secret;
     }
-
 }
 
-
-/* ===== ПРОВЕРКА СЛОВА ===== */
-
 function checkWord() {
-    
- if (!secret) {
-        alert("Подожди, слово загружается...");
-        return;
- }
+
     let guess = input.value.toUpperCase();
-    
+
     if (guess.length !== 5) {
         alert("Введите 5 букв");
         return;
     }
 
     if (!secret) {
-        alert("Подожди, слово загружается...");
+        alert("Слово ещё загружается...");
         return;
     }
-
 
     let start = row * 5;
 
@@ -167,72 +120,53 @@ function checkWord() {
 
     let result = new Array(5).fill("gray");
 
-
-    /* === GREEN === */
-
+    /* Green */
     for (let i = 0; i < 5; i++) {
-
         if (guessArr[i] === secretArr[i]) {
-
             result[i] = "green";
-
             secretArr[i] = null;
             guessArr[i] = null;
-
         }
     }
 
-
-    /* === YELLOW === */
-
+    /* Yellow */
     for (let i = 0; i < 5; i++) {
-
         if (guessArr[i] !== null) {
 
             let index = secretArr.indexOf(guessArr[i]);
 
             if (index !== -1) {
-
                 result[i] = "yellow";
                 secretArr[index] = null;
-
             }
-
         }
-
     }
 
-
-    /* === РИСУЕМ === */
-
+    /* Рисуем */
     for (let i = 0; i < 5; i++) {
-
         let cell = grid.children[start + i];
-
         cell.textContent = guess[i];
-
-        cell.classList.add(result[i]);
-
+        cell.className = "cell " + result[i];
     }
 
-
-    /* === ПОБЕДА === */
-
+    /* Победа */
     if (guess === secret) {
-
         showResult(true);
-        input.disabled = true;
-
         return;
     }
 
-
     row++;
 
-
-    /* === ПРОИГРЫШ === */
-
+    /* Проигрыш */
     if (row >= maxRows) {
-
         showResult(false);
+    }
+
+    input.value = "";
+}
+
+</script>
+
+</body>
+</html>
 
