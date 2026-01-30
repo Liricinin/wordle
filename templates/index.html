@@ -1,137 +1,3 @@
-<!DOCTYPE html>
-<html lang="ru">
-<head>
-<meta charset="UTF-8">
-<title>Wordle RU</title>
-
-<style>
-body {
-    background: #2b2b2b;
-    color: white;
-    font-family: Arial;
-    text-align: center;
-}
-
-h1 {
-    margin-top: 20px;
-}
-
-.grid {
-    display: grid;
-    grid-template-columns: repeat(5, 60px);
-    gap: 8px;
-    justify-content: center;
-    margin: 30px auto;
-}
-
-.cell {
-    width: 60px;
-    height: 60px;
-    border: 2px solid #555;
-    font-size: 28px;
-    font-weight: bold;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    text-transform: uppercase;
-}
-
-.green { background: #4caf50; }
-.yellow { background: #c9b458; }
-.gray { background: #555; }
-
-input {
-    padding: 10px;
-    width: 150px;
-    font-size: 18px;
-    text-align: center;
-    text-transform: uppercase;
-}
-
-button {
-    padding: 10px 20px;
-    margin-top: 15px;
-    font-size: 16px;
-    background: #4caf50;
-    border: none;
-    color: white;
-    cursor: pointer;
-}
-
-button:hover {
-    background: #43a047;
-}
-
-
-/* Экран результата */
-
-#resultScreen {
-    position: fixed;
-    inset: 0;
-    background: rgba(0,0,0,0.9);
-    display: none;
-    align-items: center;
-    justify-content: center;
-}
-
-#resultBox {
-    background: #222;
-    padding: 30px;
-    border-radius: 10px;
-    width: 300px;
-}
-</style>
-</head>
-
-<body>
-
-<h1>WORDLE RU</h1>
-
-<div class="grid" id="grid"></div>
-
-<input id="wordInput" maxlength="5" placeholder="Слово">
-<br>
-
-<button onclick="checkWord()">Проверить</button>
-
-
-<!-- Экран результата -->
-
-<div id="resultScreen">
-    <div id="resultBox">
-        <h2 id="resultTitle"></h2>
-        <p id="resultWord"></p>
-        <button onclick="newGame()">Далее</button>
-    </div>
-</div>
-
-
-<script>
-
-let secret = "";
-let row = 0;
-const maxRows = 6;
-
-
-// Создание сетки
-const grid = document.getElementById("grid");
-
-for (let i = 0; i < 30; i++) {
-    const cell = document.createElement("div");
-    cell.className = "cell";
-    grid.appendChild(cell);
-}
-
-
-// Получаем секретное слово
-fetch("/secret")
-.then(r => r.text())
-.then(word => {
-    secret = word.toUpperCase();
-});
-
-
-// Проверка слова
 function checkWord() {
 
     const input = document.getElementById("wordInput");
@@ -144,22 +10,44 @@ function checkWord() {
 
     let start = row * 5;
 
+    let secretArr = secret.split("");
+    let guessArr = guess.split("");
+
+    let result = new Array(5).fill("gray");
+
+
+    // 1. Зелёные
+    for (let i = 0; i < 5; i++) {
+
+        if (guessArr[i] === secretArr[i]) {
+            result[i] = "green";
+            secretArr[i] = null;
+            guessArr[i] = null;
+        }
+    }
+
+
+    // 2. Жёлтые
+    for (let i = 0; i < 5; i++) {
+
+        if (guessArr[i] !== null) {
+
+            let index = secretArr.indexOf(guessArr[i]);
+
+            if (index !== -1) {
+                result[i] = "yellow";
+                secretArr[index] = null;
+            }
+        }
+    }
+
+
+    // 3. Отрисовка
     for (let i = 0; i < 5; i++) {
 
         let cell = grid.children[start + i];
         cell.textContent = guess[i];
-
-        if (guess[i] === secret[i]) {
-            cell.classList.add("green");
-        }
-
-        else if (secret.includes(guess[i])) {
-            cell.classList.add("yellow");
-        }
-
-        else {
-            cell.classList.add("gray");
-        }
+        cell.classList.add(result[i]);
     }
 
 
@@ -179,35 +67,3 @@ function checkWord() {
 
     input.value = "";
 }
-
-
-// Экран результата
-function showResult(win) {
-
-    const screen = document.getElementById("resultScreen");
-    const title = document.getElementById("resultTitle");
-    const word = document.getElementById("resultWord");
-
-    if (win) {
-        title.textContent = "🎉 Поздравляем!";
-    } else {
-        title.textContent = "😢 Ты проиграл";
-    }
-
-    word.textContent = "Слово было: " + secret;
-
-    screen.style.display = "flex";
-}
-
-
-// Новая игра
-function newGame() {
-
-    fetch("/new")
-    .then(() => location.reload());
-}
-
-</script>
-
-</body>
-</html>
