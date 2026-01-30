@@ -13,7 +13,10 @@ SECRET = random.choice(WORDS)
 
 @app.route("/")
 def index():
-    return render_template("index.html")
+    try:
+        return render_template("index.html")
+    except Exception as e:
+        return f"ERROR: {e}"
 
 
 @app.route("/secret")
@@ -28,7 +31,7 @@ def new_game():
     return "ok"
 
 
-if __name__ == "__main__":
+if name == "__main__":
     app.run(host="0.0.0.0", port=5000)
 
 
