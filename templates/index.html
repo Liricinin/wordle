@@ -1,220 +1,142 @@
-<!DOCTYPE html>
-<html lang="ru">
-<head>
-<meta charset="UTF-8">
-<title>Wordle RU</title>
-
-<style>
-body {
-    font-family: Arial, sans-serif;
-    background: #121213;
-    color: white;
-    text-align: center;
-}
-
-h1 {
-    margin: 20px;
-}
-
-#grid {
-    display: grid;
-    grid-template-columns: repeat(5, 60px);
-    gap: 5px;
-    justify-content: center;
-    margin: 20px auto;
-}
-
-.cell {
-    width: 60px;
-    height: 60px;
-    border: 2px solid #555;
-    font-size: 32px;
-    line-height: 60px;
-    font-weight: bold;
-    text-transform: uppercase;
-}
-
-.green { background: #538d4e; }
-.yellow { background: #b59f3b; }
-.gray { background: #3a3a3c; }
-
-input {
-    font-size: 20px;
-    padding: 10px;
-    text-transform: uppercase;
-    width: 140px;
-    text-align: center;
-}
-
-button {
-    padding: 10px 15px;
-    font-size: 16px;
-    cursor: pointer;
-}
-</style>
-</head>
-
-<body>
-
-<h1>Wordle RU</h1>
-
-<div id="grid"></div>
-
-<input id="wordInput" maxlength="5" placeholder="Слово">
-<button onclick="checkWord()">OK</button>
-
-<p id="result"></p>
-<div id="keyboard">
-
-    <div class="key-row">
-        <button class="key">Й</button>
-        <button class="key">Ц</button>
-        <button class="key">У</button>
-        <button class="key">К</button>
-        <button class="key">Е</button>
-        <button class="key">Н</button>
-        <button class="key">Г</button>
-        <button class="key">Ш</button>
-        <button class="key">Щ</button>
-        <button class="key">З</button>
-        <button class="key">Х</button>
-        <button class="key">Ъ</button>
-    </div>
-
-    <div class="key-row">
-        <button class="key">Ф</button>
-        <button class="key">Ы</button>
-        <button class="key">В</button>
-        <button class="key">А</button>
-        <button class="key">П</button>
-        <button class="key">Р</button>
-        <button class="key">О</button>
-        <button class="key">Л</button>
-        <button class="key">Д</button>
-        <button class="key">Ж</button>
-        <button class="key">Э</button>
-    </div>
-
-    <div class="key-row">
-        <button class="key wide">ENTER</button>
-
-        <button class="key">Я</button>
-        <button class="key">Ч</button>
-        <button class="key">С</button>
-        <button class="key">М</button>
-        <button class="key">И</button>
-        <button class="key">Т</button>
-        <button class="key">Ь</button>
-        <button class="key">Б</button>
-        <button class="key">Ю</button>
-
-        <button class="key wide">⌫</button>
-    </div>
-
-</div>
-<script>
-
-let row = 0;
-const maxRows = 6;
-
-const grid = document.getElementById("grid");
-const input = document.getElementById("wordInput");
-const resultText = document.getElementById("result");
-
-let secret = "";
-
-/* Создаём поле */
-for (let i = 0; i < 30; i++) {
-    let div = document.createElement("div");
-    div.className = "cell";
-    grid.appendChild(div);
-}
-
-/* Загружаем слово */
-fetch("/secret")
-    .then(r => r.text())
-    .then(word => {
-        secret = word.trim().toUpperCase();
-        console.log("SECRET:", secret); // для проверки
-    });
-
-function showResult(win) {
-    if (win) {
-        resultText.textContent = "Ты выиграл 😎";
-    } else {
-        resultText.textContent = "Проиграл 😢 Слово: " + secret;
-    }
-}
-
-function checkWord() {
-
-    let guess = input.value.toUpperCase();
-
-    if (guess.length !== 5) {
-        alert("Введите 5 букв");
-        return;
-    }
-
-    if (!secret) {
-        alert("Слово ещё загружается...");
-        return;
-    }
-
-    let start = row * 5;
-
-    let secretArr = secret.split("");
+let secretArr = secret.split("");
     let guessArr = guess.split("");
 
     let result = new Array(5).fill("gray");
 
-    /* Green */
+
+    /* GREEN */
+
     for (let i = 0; i < 5; i++) {
+
         if (guessArr[i] === secretArr[i]) {
+
             result[i] = "green";
             secretArr[i] = null;
             guessArr[i] = null;
+
         }
     }
 
-    /* Yellow */
+
+    /* YELLOW */
+
     for (let i = 0; i < 5; i++) {
+
         if (guessArr[i] !== null) {
 
             let index = secretArr.indexOf(guessArr[i]);
 
             if (index !== -1) {
+
                 result[i] = "yellow";
                 secretArr[index] = null;
+
             }
+
         }
     }
 
-    /* Рисуем */
+
+    /* РИСУЕМ */
+
     for (let i = 0; i < 5; i++) {
+
         let cell = grid.children[start + i];
+
         cell.textContent = guess[i];
         cell.className = "cell " + result[i];
+
     }
 
-    /* Победа */
+
+    /* WIN */
+
     if (guess === secret) {
         showResult(true);
         return;
     }
 
+
     row++;
 
-    /* Проигрыш */
+
+    /* LOSE */
+
     if (row >= maxRows) {
         showResult(false);
     }
 
+
     input.value = "";
 }
+
+
+/* ===== НОВАЯ ИГРА ===== */
+
+function newGame() {
+
+    fetch("/new")
+        .then(() => {
+
+            row = 0;
+            resultText.textContent = "";
+            input.value = "";
+
+            for (let cell of grid.children) {
+                cell.textContent = "";
+                cell.className = "cell";
+            }
+
+            loadSecret();
+        });
+}
+
+
+/* ===== ВИРТ КЛАВА ===== */
+
+document.querySelectorAll("#keyboard .key").forEach(btn => {
+
+    btn.addEventListener("click", () => {
+
+        let key = btn.textContent;
+
+        if (key === "ENTER") {
+            checkWord();
+            input.focus();
+            return;
+        }
+
+        if (key === "⌫") {
+            input.value = input.value.slice(0, -1);
+            input.focus();
+            return;
+        }
+
+        if (input.value.length < 5 && key.length === 1) {
+            input.value += key;
+            input.focus();
+        }
+
+    });
+
+});
+
+
+/* ===== ФИЗ КЛАВА ===== */
+
+document.addEventListener("keydown", e => {
+
+    if (e.key === "Enter") {
+        checkWord();
+    }
+
+    if (e.key === "Backspace") {
+        input.value = input.value.slice(0, -1);
+    }
+
+});
 
 </script>
 
 </body>
 </html>
-
-
