@@ -1,10 +1,11 @@
+<script>
 function checkWord() {
 
     const input = document.getElementById("wordInput");
     let guess = input.value.toUpperCase();
 
     if (guess.length !== 5) {
-        alert("Need 5 letters!");
+        alert("Enter 5 letters");
         return;
     }
 
@@ -16,7 +17,7 @@ function checkWord() {
     let result = new Array(5).fill("gray");
 
 
-    // Green
+    // Green pass
     for (let i = 0; i < 5; i++) {
 
         if (guessArr[i] === secretArr[i]) {
@@ -27,7 +28,7 @@ function checkWord() {
     }
 
 
-    // Yellow
+    // Yellow pass
     for (let i = 0; i < 5; i++) {
 
         if (guessArr[i] !== null) {
@@ -42,7 +43,7 @@ function checkWord() {
     }
 
 
-    // Draw
+    // Draw cells
     for (let i = 0; i < 5; i++) {
 
         let cell = grid.children[start + i];
@@ -57,7 +58,6 @@ function checkWord() {
         return;
     }
 
-
     row++;
 
     // Lose
@@ -67,3 +67,4 @@ function checkWord() {
 
     input.value = "";
 }
+</script>
