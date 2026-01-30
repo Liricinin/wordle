@@ -16,7 +16,7 @@ function checkWord() {
     let result = new Array(5).fill("gray");
 
 
-    // 1. Зелёные
+    // Green
     for (let i = 0; i < 5; i++) {
 
         if (guessArr[i] === secretArr[i]) {
@@ -27,7 +27,7 @@ function checkWord() {
     }
 
 
-    // 2. Жёлтые
+    // Yellow
     for (let i = 0; i < 5; i++) {
 
         if (guessArr[i] !== null) {
@@ -42,7 +42,7 @@ function checkWord() {
     }
 
 
-    // 3. Отрисовка
+    // Draw
     for (let i = 0; i < 5; i++) {
 
         let cell = grid.children[start + i];
@@ -51,7 +51,7 @@ function checkWord() {
     }
 
 
-    // Победа
+    // Win
     if (guess === secret) {
         showResult(true);
         return;
@@ -60,7 +60,7 @@ function checkWord() {
 
     row++;
 
-    // Поражение
+    // Lose
     if (row >= maxRows) {
         showResult(false);
     }
