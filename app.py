@@ -13,7 +13,7 @@ SECRET = random.choice(WORDS)
 
 @app.route("/")
 def index():
-    return render_template("index.html")
+    return "<h1>TEST</h1>"
 
 
 @app.route("/secret")
@@ -30,6 +30,7 @@ def new():
 
 if __name__ == "__main__":
     app.run()
+
 
 
 
