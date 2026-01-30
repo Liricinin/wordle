@@ -5,7 +5,7 @@ import os
 app = Flask(__name__, template_folder="templates")
 
 WORDS = [
-    "домик", "комик", "кошка", "вилка", "фляга",
+    "домик", "комик", "кошка", "вилка", "флага",
     "песня", "ручка", "лампа", "столб", "трава"
 ]
 
@@ -35,7 +35,7 @@ def debug():
     return str(files)
 
 
-if __name__ == "__main__":
+if name == "__main__":
     app.run(host="0.0.0.0", port=5000)
 
 
