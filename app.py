@@ -1,7 +1,8 @@
 from flask import Flask, render_template
 import random
+import os
 
-app = Flask(__name__)
+app = Flask(__name__, template_folder="templates")
 
 WORDS = [
     "домик", "комик", "кошка", "вилка", "фляга",
@@ -13,10 +14,7 @@ SECRET = random.choice(WORDS)
 
 @app.route("/")
 def index():
-    try:
-        return render_template("index.html")
-    except Exception as e:
-        return f"ERROR: {e}"
+    return render_template("index.html")
 
 
 @app.route("/secret")
@@ -31,7 +29,13 @@ def new_game():
     return "ok"
 
 
-if __name__ == "__main__":
+@app.route("/debug")
+def debug():
+    files = os.listdir("templates") if os.path.exists("templates") else "NO TEMPLATES DIR"
+    return str(files)
+
+
+if name == "__main__":
     app.run(host="0.0.0.0", port=5000)
 
 
