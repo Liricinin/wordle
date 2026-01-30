@@ -1,7 +1,7 @@
 from flask import Flask, render_template
 import random
 
-app = Flask(__name__)
+app = Flask(__name__, template_folder="templates")
 
 WORDS = [
     "домик", "кошка", "лампа", "вилка", "трава",
@@ -30,6 +30,7 @@ def new():
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=10000)
+
 
 
 
