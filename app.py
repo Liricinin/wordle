@@ -4,14 +4,29 @@ import random
 app = Flask(__name__)
 
 WORDS = [
-    "арбуз", "домик", "маши", "книга", "ручка",
-    "школа", "окноо", "рекаа", "мирок", "котик"
+    "домик", "комик", "кошка", "вилка", "рекаа",
+    "песня", "ручка", "лампа", "столб", "трава"
 ]
+
+SECRET = random.choice(WORDS)
+
 
 @app.route("/")
 def index():
-    word = random.choice(WORDS)
-    return render_template("index.html", word=word)
+    return render_template("index.html")
 
-if __name__ == "__main__":
+
+@app.route("/secret")
+def get_secret():
+    return SECRET
+
+
+@app.route("/new")
+def new_game():
+    global SECRET
+    SECRET = random.choice(WORDS)
+    return "ok"
+
+
+if name == "__main__":
     app.run()
