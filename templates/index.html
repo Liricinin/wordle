@@ -357,6 +357,20 @@ keys.forEach(btn => {
 
 document.addEventListener("keydown", e => {
 
+    input.focus(); // всегда держим фокус
+
+    if (e.key === "Enter") {
+        checkWord();
+        return;
+    }
+
+    if (e.key === "Backspace") {
+        input.value = input.value.slice(0, -1);
+        return;
+    }
+
+});
+
     if (e.key === "Enter") {
         checkWord();
     }
@@ -370,6 +384,7 @@ document.addEventListener("keydown", e => {
 
 </body>
 </html>
+
 
 
 
