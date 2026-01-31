@@ -127,7 +127,15 @@ h1 {
 
 <div id="grid"></div>
 
-<input id="wordInput" maxlength="5" autofocus>
+<input
+  id="wordInput"
+  maxlength="5"
+  placeholder="Слово"
+  inputmode="text"
+  autocomplete="off"
+  autocorrect="off"
+  autocapitalize="characters"
+/>
 <button onclick="checkWord()">OK</button>
 
 <p id="result"></p>
@@ -362,6 +370,7 @@ document.addEventListener("keydown", e => {
 
 </body>
 </html>
+
 
 
 
