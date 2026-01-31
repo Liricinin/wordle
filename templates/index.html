@@ -214,6 +214,26 @@ function checkWord() {
         return;
     }
 
+    fetch("/check/" + guess.toLowerCase())
+        .then(r => r.text())
+        .then(res => {
+
+            if (res !== "ok") {
+                alert("Такого слова нет 😅");
+                return;
+            }
+
+            checkLogic(guess);
+        });
+
+    return;
+}
+
+    if (!secret) {
+        alert("Подождите...");
+        return;
+    }
+
     let start = row * 5;
 
     let secretArr = secret.split("");
@@ -384,6 +404,7 @@ document.addEventListener("keydown", e => {
 
 </body>
 </html>
+
 
 
 
