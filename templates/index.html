@@ -295,28 +295,52 @@ function newGame() {
 
 /* VIRTUAL KEYBOARD */
 
-document.querySelectorAll(".key").forEach(btn => {
+// ===== MOBILE FIXED KEYBOARD =====
+
+const keys = document.querySelectorAll(".key");
+
+function handleKey(key) {
+
+    if (key === "ENTER") {
+        checkWord();
+        return;
+    }
+
+    if (key === "⌫") {
+        input.value = input.value.slice(0, -1);
+        input.focus();
+        return;
+    }
+
+    if (input.value.length < 5 && key.length === 1) {
+        input.value += key;
+        input.focus();
+    }
+}
+
+
+// Mobile
+keys.forEach(btn => {
+
+    btn.addEventListener("touchstart", e => {
+
+        e.preventDefault();
+        handleKey(btn.textContent);
+
+    }, { passive: false });
+
+});
+
+
+// PC
+keys.forEach(btn => {
 
     btn.addEventListener("click", () => {
 
-        let key = btn.textContent;
+        handleKey(btn.textContent);
 
-        if (key === "ENTER") {
-            checkWord();
-            return;
-        }
-
-        if (key === "⌫") {
-            input.value = input.value.slice(0, -1);
-            input.focus();
-            return;
-        }
-
-        if (input.value.length < 5) {
-            input.value += key;
-            input.focus();
-        }
     });
+
 });
 
 
@@ -337,5 +361,6 @@ document.addEventListener("keydown", e => {
 
 </body>
 </html>
+
 
 
