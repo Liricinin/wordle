@@ -21,6 +21,15 @@ def secret():
     return SECRET
 
 
+@app.route("/check/<word>")
+def check(word):
+    word = word.lower()
+
+    if word in WORDS:
+        return "ok"
+    else:
+        return "no"
+
 @app.route("/new")
 def new():
     global SECRET
@@ -30,6 +39,7 @@ def new():
 
 if __name__ == "__main__":
     app.run()
+
 
 
 
