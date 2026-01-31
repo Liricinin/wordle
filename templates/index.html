@@ -129,12 +129,11 @@ h1 {
 
 <input
   id="wordInput"
+  type="text"
   maxlength="5"
-  placeholder="Слово"
-  inputmode="text"
   autocomplete="off"
-  autocorrect="off"
-  autocapitalize="characters"
+  autocapitalize="off"
+  spellcheck="false"
 />
 <button onclick="checkWord()">OK</button>
 
@@ -362,11 +361,34 @@ keys.forEach(btn => {
 
 
 // PC
-keys.forEach(btn => {
+function checkWord() {
 
-    btn.addEventListener("click", () => {
+    let guess = input.value.toUpperCase();
 
-        handleKey(btn.textContent);
+    if (guess.length !== 5) {
+        alert("Введите 5 букв");
+        return;
+    }
+
+    if (!secret) {
+        alert("Подождите...");
+        return;
+    }
+
+    fetch("/check/" + guess.toLowerCase())
+        .then(r => r.text())
+        .then(res => {
+
+            if (res !== "ok") {
+                alert("Такого слова нет 😅");
+                return;
+            }
+
+            checkLogic(guess);
+        });
+
+    return;
+}
 
     });
 
@@ -375,35 +397,69 @@ keys.forEach(btn => {
 
 /* REAL KEYBOARD */
 
-document.addEventListener("keydown", e => {
+// =======================
+// INPUT FIX
+// =======================
 
-    input.focus(); // всегда держим фокус
+const keys = document.querySelectorAll(".key");
+
+function focusInput() {
+    input.focus();
+}
+
+window.onload = () => {
+    focusInput();
+};
+
+// Виртуальная клава
+keys.forEach(key => {
+    key.addEventListener("click", (e) => {
+
+        e.preventDefault();
+        focusInput();
+
+        const letter = key.textContent.trim();
+
+        if (letter === "ENTER") {
+            checkWord();
+            return;
+        }
+
+        if (letter === "⌫") {
+            input.value = input.value.slice(0, -1);
+            return;
+        }
+
+        if (input.value.length < 5 && /^[А-ЯЁ]$/.test(letter)) {
+            input.value += letter;
+        }
+    });
+});
+
+// Физическая клава
+document.addEventListener("keydown", (e) => {
 
     if (e.key === "Enter") {
         checkWord();
         return;
     }
 
-    if (e.key === "Backspace") {
-        input.value = input.value.slice(0, -1);
-        return;
-    }
+    if (e.key === "Backspace") return;
 
-});
+    if (/^[а-яёА-ЯЁ]$/.test(e.key)) {
 
-    if (e.key === "Enter") {
-        checkWord();
-    }
+        if (input.value.length < 5) {
+            input.value += e.key.toUpperCase();
+        }
 
-    if (e.key === "Backspace") {
-        input.value = input.value.slice(0, -1);
+        e.preventDefault();
     }
 });
-
 </script>
 
 </body>
 </html>
+
 
 
 
